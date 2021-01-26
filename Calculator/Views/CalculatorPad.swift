@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CalculatorPad: View {
+    @EnvironmentObject var model: CalculatorModel
+    
     let rows: [[CalculatorButtonItem]] = [
         [.command(.clear), .command(.flip), .command(.percent), .op(.divide)],
         [.digit(7), .digit(8), .digit(9), .op(.multiply)],
@@ -17,8 +19,8 @@ struct CalculatorPad: View {
     ]
     var body: some View {
         VStack(spacing: 8) {
-            ForEach(rows, id: \.self) { (item: [CalculatorButtonItem]) in
-                CalculatorButtonRow(row: item)
+            ForEach(rows, id: \.self) { (row: [CalculatorButtonItem]) in
+                CalculatorButtonRow(row: row)
             }
         }
     }

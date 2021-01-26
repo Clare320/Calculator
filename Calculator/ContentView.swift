@@ -8,24 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var brain: CalculatorBrain = .left("0")
+    @EnvironmentObject var model: CalculatorModel
+    
+    @State private var editingHistory = false
+    @State private var showAlert = false
     
     var body: some View {
         VStack(spacing: 12) {
             Spacer()
-            Text(brain.output)
+            Button("操作履历：\(model.history.count)") {
+                self.editingHistory = true
+            }.sheet(isPresented: self.$editingHistory, content: {
+                HistoryView(model: self.model)
+            })
+            Text(model.brain.output)
                 .font(.system(size: 76))
                 .minimumScaleFactor(0.5)
                 .padding(.trailing, 24)
                 .lineLimit(1)
-                .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .trailing)
+                .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
+                    self.showAlert = true
+                })
+                .alert(isPresented: $showAlert, content: {
+                    Alert(title: Text(model.historyDetail), message: Text(model.brain.output), dismissButton: Alert.Button.cancel(Text("OK")))
+                })
             CalculatorPad()
+                .padding(.bottom)
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(CalculatorModel())
     }
 }

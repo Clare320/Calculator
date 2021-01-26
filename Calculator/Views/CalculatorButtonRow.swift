@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct CalculatorButtonRow: View {
+    @EnvironmentObject var model: CalculatorModel
+    
     let row: [CalculatorButtonItem]
     var body: some View {
         HStack {
             ForEach(row, id: \.self) { (item: CalculatorButtonItem) in
                 CalculatorButton(title: item.title, size: item.size, backgroundColorName: item.backgroundColorName) {
-                    print("click --->")
+                    model.apply(item)
                 }
             }
         }

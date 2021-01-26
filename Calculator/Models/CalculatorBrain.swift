@@ -55,10 +55,16 @@ extension CalculatorBrain {
     private func apply(num: Int) -> CalculatorBrain {
         switch self {
         case .left(let left):
+            if formatter.number(from: left) == 0 && !left.hasSuffix(".") {
+                return .left(String(num))
+            }
             return .left("\(left)\(num)")
         case .leftOp(left: let left, op: let op):
             return .leftOpRight(left: left, op: op, right: String(num))
         case .leftOpRight(left: let left, op: let op, right: let right):
+            if formatter.number(from: right) == 0 && !right.hasSuffix("."){
+                return .leftOpRight(left: left, op: op, right: "\(num)")
+            }
             return .leftOpRight(left: left, op: op, right: "\(right)\(num)")
         case .error: return .left("0")
         }
@@ -103,6 +109,7 @@ extension CalculatorBrain {
                 result = leftNum * rightNum
             case .equal:
                 result = rightNum
+                return .left(formatter.string(from: result as NSNumber)!)
             }
             return .leftOp(left: formatter.string(from: result as NSNumber)!, op: op)
         case .error: return .left("0")
